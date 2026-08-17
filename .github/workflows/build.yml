@@ -11,8 +11,17 @@ jobs:
       - name: Install Buildozer
         run: |
           sudo apt update
-          sudo apt install -y openjdk-17-jdk python3-pip zip unzip
+          sudo apt install -y openjdk-17-jdk python3-pip zip unzip libffi-dev libssl-dev
           pip install buildozer cython==0.29.33
+      - name: Extract zip
+        run: |
+          ls
+          unzip -o "*.zip" || unzip -o "*/*.zip" || unzip -o "**/*.zip" || true
+          find. -name "main.py" -type f
+          # copy from nested folders to root
+          find. -name "main.py" -exec cp {}./main.py \; 2>/dev/null || true
+          find. -name "buildozer.spec" -exec cp {}./buildozer.spec \; 2>/dev/null || true
+          ls -lh
       - name: Build
         run: buildozer android debug
       - name: Upload
